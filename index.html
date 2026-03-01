@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Cammino di Renzo da Milano a Bergamo</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Georgia', serif; background-color: #f4ecd8; }
+        #titolo { text-align: center; padding: 10px; background: #5d3a1a; color: #e9dcc9; margin: 0; }
+        #mappa-contenitore { height: 90vh; width: 100%; border-top: 2px solid #2e1f0f; }
+        
+        .legend {
+            padding: 10px;
+            background: rgba(255,255,255,0.9);
+            line-height: 24px;
+            color: #333;
+            border: 2px solid #8b4513;
+            border-radius: 5px;
+        }
+        .legend i {
+            width: 30px;
+            height: 3px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="titolo">
+        <h1>Cammino di Renzo da Milano a Bergamo</h1>
+    </div>
+
+    <div id="mappa-contenitore"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('mappa-contenitore').setView([45.58, 9.43], 11);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // --- PUNTI STORICI ---
+        L.marker([45.464, 9.191]).addTo(map).bindPopup("<b>Milano</b>: Da qui è iniziato il mio lungo cammino, sono contento di aver abbandonato questo luogo di malcontento e ingiustizie.");
+        L.marker([45.533, 9.403]).addTo(map).bindPopup("<b>Gorgonzola</b>: Ero molto affaticato dalla stanchezza quando sono giunto in questo luogo dunque sono entrato in una locando per mangiare. Mentre mangiavo ho sentito un chiachiericcio riguardante ciò che è successo a Milano. Normalmente avrei reagito impulsivamente facendo capire di essere complice alla rivolta ma questa volta ho preferito cercare di rimanere indifferente, in questo modo ho evitato altri possibili guai.");
+        
+        // PUNTO ESATTO: Oasi Le Foppe (Trezzo sull'Adda)
+        var oasiLeFoppe = [45.61437, 9.4988]; 
+        L.marker(oasiLeFoppe).addTo(map).bindPopup("<b>Rifugio della fortuna</b><br>Qui ho sostato per una notte in un capanno, prima di attraversare il confine. In questo luogo tenebroso di sera e quiete di mattino ho trovato un pescatore disposto ad accompagnarmi dall'altra sponda del fiume. Appena ho calpestato il suolo della terra di San Marco mi sono sentito più libero lasciandomi alle spalle quel territorio opprimente");
+
+        L.marker([45.704, 9.667]).addTo(map).bindPopup("<b>Bergamo</b>: Per il momento mi nascondero qui a Bergamo con l'aiuto di mio cugino Bartolo.");
+
+        // --- IL FIUME ADDA (Confine Blu Tratteggiato a Destra dell'Oasi) ---
+        var puntiFiume = [
+            [45.85, 9.40], [45.75, 9.43], [45.68, 9.47], 
+            [45.62, 9.53], // Il fiume passa a est dell'Oasi
+            [45.58, 9.52], [45.45, 9.53]
+        ];
+        L.polyline(puntiFiume, {color: '#1a4a7a', weight: 6, opacity: 0.6, dashArray: '10, 10'}).addTo(map);
+
+        // --- IL PERCORSO DI RENZO (Linea Rossa Continua Irregolare) ---
+        var camminoRenzo = [
+            [45.464, 9.191], // Milano
+            // Tratto Milano-Gorgonzola (ZIG-ZAG ACCENTUATO)
+            [45.475, 9.220], [45.460, 9.240], [45.485, 9.260], [45.470, 9.290], 
+            [45.500, 9.310], [45.480, 9.340], [45.510, 9.360], [45.495, 9.385],
+            [45.533, 9.403], // Gorgonzola
+            // Tratto Gorgonzola-Oasi Le Foppe (IRREGOLARE)
+            [45.550, 9.430], [45.545, 9.460], [45.580, 9.480], [45.600, 9.490],
+            oasiLeFoppe, // Arrivo all'Oasi Le Foppe
+            // Attraversamento fiume e arrivo a Bergamo
+            [45.620, 9.540], [45.625, 9.595], [45.660, 9.625], [45.675, 9.645],
+            [45.704, 9.667]  // Bergamo
+        ];
+
+        L.polyline(camminoRenzo, {
+            color: '#d9534f', 
+            weight: 4, 
+            opacity: 1,
+            lineJoin: 'round' 
+        }).addTo(map);
+
+        // --- LEGENDA ---
+        var legend = L.control({position: 'bottomright'});
+        legend.onAdd = function (map) {
+            var div = L.DomUtil.create('div', 'legend');
+            div.innerHTML += '<b>Legenda</b><br>';
+            div.innerHTML += '<i style="background: #d9534f"></i> Percorso di Renzo<br>';
+            div.innerHTML += '<i style="border-top: 2px dashed #1a4a7a; height:0; background:none; width:30px"></i> Confine tra il ducato di Milano e il ducato di Venezia (1630)<br>';
+            return div;
+        };
+        legend.addTo(map);
+
+    </script>
+</body>
+</html>
